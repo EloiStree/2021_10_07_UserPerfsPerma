@@ -1,0 +1,16 @@
+
+{                                                                   
+            "name": "be.eloistree.userperfspermaEditor",          
+    "references": ["be.eloistree.userperfsperma","be.eloistree.generaltoolbox"
+],                                                              
+    "optionalUnityReferences": [],                                  
+    "includePlatforms": [                                           
+        "Editor"                                                    
+    ],                                                              
+    "excludePlatforms": [],                                         
+    "allowUnsafeCode": false,                                       
+    "overrideReferences": false,                                    
+    "precompiledReferences": [],                                    
+    "autoReferenced": true,                                         
+    "defineConstraints": []                                         
+}                                                                   

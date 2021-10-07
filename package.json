@@ -1,0 +1,23 @@
+
+{                                                                                
+  "name": "be.eloistree.userperfsperma",                              
+  "displayName": "User Perferences Perma Key Value",                        
+  "version": "0.0.1",                         
+  "unity": "2018.1",                             
+  "unityRelease": "",                             
+  "description": "",                         
+  "keywords": ["Script","Tool"],                       
+  "dependencies":{},     
+  "relatedPackages":{},     
+  "samples" : [],     
+  "author" : {
+"name":"Eloi Stree",
+"mail":"streeeloi@gmail.com",
+"url":"https://github.com/EloiStree"},     
+  "repository":{
+"type":"Git",
+"url":"https://github.com/EloiStree/2021_10_07_UserPerfsPerma.git",
+"footprint":"",
+"revision":""},     
+  "category": "Script"                   
+} 

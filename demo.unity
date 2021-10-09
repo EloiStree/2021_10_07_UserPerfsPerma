@@ -206,6 +206,36 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1031331259
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1031331260}
+  m_Layer: 0
+  m_Name: Save User Data In Folder Encrypted
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1031331260
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1031331259}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 19.457886, y: 1.9461428, z: -0.6895819}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 6
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1200380704
 GameObject:
   m_ObjectHideFlags: 0
@@ -238,17 +268,17 @@ MonoBehaviour:
   m_testInt:
     m_properties:
     - m_key: YO
-      m_properity: 5
+      m_value: 0
   m_v3:
     m_properties: []
   m_long:
     m_properties:
     - m_key: Test
-      m_properity: 25
+      m_value: 0
   m_vector3StringAble:
     m_properties:
     - m_key: Test
-      m_properity: {x: 4, y: 5.2, z: 54.4554}
+      m_value: {x: 0, y: 0, z: 0}
     m_valuesFormat: '[{0:0.00}:{1:0.00}:{2:0.00}]'
   m_key: Test
   m_found: 0
@@ -269,6 +299,36 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1630290234
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1630290235}
+  m_Layer: 0
+  m_Name: Save User Data In Folder
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1630290235
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1630290234}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 19.457886, y: 1.9461428, z: -0.6895819}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1814590374
 GameObject:
@@ -363,6 +423,153 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
+--- !u!1 &1852378034
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1852378036}
+  - component: {fileID: 1852378035}
+  m_Layer: 0
+  m_Name: UserPropertiesRegisterMono
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1852378035
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1852378034}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2075b3366d34f7d4ebdb4c27c40e5422, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_subFolderProposition: 
+  m_fileNameProposition: 
+  m_textToStore: 
+  m_whereToStorePath: C:\Users\OpenMacroInput\Desktop\UserData
+  m_oneUserTest:
+    m_userInfo:
+      m_userAlias: "Eloi Str\xE9e"
+      m_userStringId: eloi@tmp.com
+    m_primitivesStorage:
+      m_bool:
+        m_properties:
+        - m_key: test
+          m_value: 1
+      m_byte:
+        m_properties:
+        - m_key: likepatato
+          m_value: 5
+      m_signByte:
+        m_properties:
+        - m_key: test
+          m_value: 0
+      m_char:
+        m_properties:
+        - m_key: test
+          m_value: 100
+      m_decimal:
+        m_properties:
+        - m_key: test
+      m_double:
+        m_properties:
+        - m_key: test
+          m_value: 0.5464
+      m_float:
+        m_properties:
+        - m_key: test
+          m_value: 0.876
+      m_int:
+        m_properties:
+        - m_key: test
+          m_value: 5
+      m_uint:
+        m_properties:
+        - m_key: test
+          m_value: 6
+      m_long:
+        m_properties:
+        - m_key: test
+          m_value: 7
+      m_ulong:
+        m_properties:
+        - m_key: test
+          m_value: 4
+      m_short:
+        m_properties:
+        - m_key: test
+          m_value: 5
+      m_ushot:
+        m_properties:
+        - m_key: test
+          m_value: 6
+      m_unprotectedString:
+        m_properties:
+        - m_key: discord
+          m_value: discoreutl
+        - m_key: skype
+          m_value: skypename
+    m_context:
+      m_applicationAliasID: DemoOfTool
+      m_realLifeEventAliasID: RandomTest
+      m_computerAliasID: Default
+      m_applicatoinVersion: 0.0.1
+  m_positions:
+    m_properties: []
+    m_valuesFormat: '[{0:0.00}:{1:0.00}:{2:0.00}]'
+--- !u!4 &1852378036
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1852378034}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 19.457886, y: 1.9461428, z: -0.6895819}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 7
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1943709629
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1943709630}
+  m_Layer: 0
+  m_Name: Save User Data In Folder Per terminal per event
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1943709630
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1943709629}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 19.457886, y: 1.9461428, z: -0.6895819}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 5
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2010366964
 GameObject:
   m_ObjectHideFlags: 0

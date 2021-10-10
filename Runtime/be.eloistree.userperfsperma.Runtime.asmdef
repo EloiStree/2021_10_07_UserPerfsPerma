@@ -1,14 +1,16 @@
-
-{                                                                   
-            "name": "be.eloistree.userperfsperma",          
+{
+    "name": "be.eloistree.userperfsperma",
+    "rootNamespace": "",
     "references": [
-],                                                              
-    "optionalUnityReferences": [],                                  
-    "includePlatforms": [],                                                  
-    "excludePlatforms": [],                                         
-    "allowUnsafeCode": false,                                       
-    "overrideReferences": false,                                    
-    "precompiledReferences": [],                                    
-    "autoReferenced": true,                                         
-    "defineConstraints": []                                         
-}                                                                   
+        "GUID:392548a91bd9dab4d9a8c4b2139b9ad2"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

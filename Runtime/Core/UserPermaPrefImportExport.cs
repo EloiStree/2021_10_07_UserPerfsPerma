@@ -6,85 +6,62 @@ using System.IO;
 using System.Text;
 using UnityEngine;
 
-public class UserPropertiesRegisterMono : MonoBehaviour
-{
-    [Header("Proposition")]
-    public string m_subFolderProposition;
-    public string m_fileNameProposition;
-    [TextArea(0, 10)]
-    public string m_textToStore;
 
-    [Header("Where to store")]
-    public string m_whereToStorePath = "";
-
-    [Header("Value")]
-    public UserPermaPrefWithContext m_oneUserTest;
-    public KeyPropertiesUnsaveText m_unsafeText;
-    public KeyPropertiesVector3Stringable m_positions = new KeyPropertiesVector3Stringable();
-    public bool m_useBase64;
-
-    [Header("Save and load")]
-    public bool m_saved;
-    public string m_pathUsed;
-    void Start()
-    {
-        UserPermaPrefImportExport.SetAsUsingBase64(m_useBase64);
-        m_positions.SetValue("head", Vector3.up * 1.85f);
-        m_positions.SetValue("forward", Vector3.forward);
-        m_oneUserTest.m_dynamiqueStorage.m_dynamiqueStorage.Add(m_positions);
-        m_oneUserTest.m_dynamiqueStorage.m_dynamiqueStorage.Add(m_unsafeText);
-        UserPermaPrefImportExport.GetSaveProposition(in m_oneUserTest, 
-            out m_subFolderProposition,
-            out m_fileNameProposition,
-            out m_textToStore );
-
-        UserPermaPrefImportExport.TryToSave(out m_saved, out m_pathUsed, in m_textToStore, in m_whereToStorePath, in m_subFolderProposition, in m_fileNameProposition) ;
-    }
-
-
-
-}
 public class UserPermaPrefImportExport
 {
-    public static bool m_userBase64 = true;
+    public static readonly string FileExtensionName = ".userpermapref";
+    public static readonly string FileExtensionNameEncrypted = ".userpermaprefencrypted";
     public static bool m_putCommentary = true;
     public static string m_defaultReplaceAlphaNum = "_";
-    public static uint m_defaultMaxFileSize =200;
-    public static void GetSaveProposition(in UserPermaPrefWithContext user, out string subFolderProposition, out string fileNameProposition, out string textInFile)
+    public static uint m_defaultMaxFileSize = 200;
+
+    public static void SaveAsFile(in string directoryPath,in UserPermaPref user)
     {
+        E_StringByte64Utility.GetText64FromText(in user.m_userInfo.m_userStringId, out string b64ID);
+        if (!Directory.Exists(directoryPath)) {
+            Directory.CreateDirectory(directoryPath);
+        }
+        string filePath= directoryPath+"/" + b64ID + FileExtensionName;
+        ConvertToExportableText(in user, out string text);
+        File.WriteAllText(filePath, text);
+    }
+
+    public static void ConvertToExportableText(in UserPermaPref user, out string text)
+    {
+        ConvertToExportableText(in user, out string sub, out string file, out text);
+    }
+
+    public static void ConvertToExportableText(in UserPermaPref user, out string subFolderProposition, out string fileNameProposition, out string textInFile)
+    {
+        subFolderProposition = "";
         string nameFileAlpha = string.Format("{0}_{1}", user.m_userInfo.m_userAlias, user.m_userInfo.m_userStringId);
 
         E_StringUtility.ConvertToAlphaNumByReplacing(in nameFileAlpha, out nameFileAlpha, in m_defaultReplaceAlphaNum);
         E_StringUtility.Clamp(in nameFileAlpha, out nameFileAlpha, in m_defaultMaxFileSize);
 
         fileNameProposition = string.Format("{0}.userperfperma", nameFileAlpha);
-        GetContextAlphaClamp(in user.m_context, out  subFolderProposition,in m_defaultMaxFileSize, in m_defaultReplaceAlphaNum);
 
 
         GetSaveProposition(in user.m_userInfo, out string userInfo);
-        GetSaveProposition(in user.m_primitivesStorage, out string textPrimitive );
+        GetSaveProposition(in user.m_primitivesStorage, out string textPrimitive);
         GetSaveProposition(in user.m_dynamiqueStorage, out string textDynamique);
         StringBuilder metaInfo = new StringBuilder();
-        if (m_putCommentary) { 
-            metaInfo.AppendLine("//This file is build with https://github.com/EloiStree/2021_10_07_UserPerfsPerma");
-            metaInfo.AppendLine("//Feel free to go watch the source and use it in Unity if you need to import and use this file.");
-            metaInfo.AppendLine("//Base64 to Text: https://www.base64decode.org/");
+        if (m_putCommentary)
+        {
+            metaInfo.AppendLine("//File Documentation: https://github.com/EloiStree/2021_10_07_UserPerfsPerma");
+            metaInfo.AppendLine("//Base64: https://www.base64decode.org/");
         }
 
-        textInFile = string.Join("\n\n", metaInfo.ToString(), userInfo, textPrimitive, textDynamique);
+        textInFile = string.Join("\n\n", metaInfo.ToString(), userInfo,  textPrimitive, textDynamique);
     }
 
-    public static void SetAsUsingBase64(bool useBase64) {
-        m_userBase64 = useBase64;
-    }
+    
+
     private static void GetSaveProposition(in UserContext userInfo, out string userInfoAsText)
     {
-        string alias= userInfo.m_userAlias, userString = userInfo.m_userStringId;
-
-        if (m_userBase64) { 
-            E_StringByte64Utility.GetText64FromText(in userInfo.m_userAlias, out alias);
-            E_StringByte64Utility.GetText64FromText(in userInfo.m_userStringId, out userString);
-        }
+        string alias = userInfo.m_userAlias,
+                userString = userInfo.m_userStringId;
+        //E_StringByte64Utility.GetText64FromText(in userInfo.m_userAlias, out alias);
         userInfoAsText = string.Format("useralias:{0}\nuserid:{1}\n", alias, userString);
     }
     private static void GetSaveProposition(in AllSharpPrimitiveKeyValueStorageCollection primitiveStorage, out string primitiveStorageAsText)
@@ -205,34 +182,28 @@ public class UserPermaPrefImportExport
 
         if (keys.Length > 0)
         {
-            sb.Append(string.Format("\n>{0} ({1}, {2})\n", name, typeof(T).FullName, assembly.GetName().Name ));
+            sb.Append(string.Format("\n>{0} ({1}, {2})\n", name, typeof(T).FullName, assembly.GetName().Name));
             foreach (string key in keys)
             {
 
 
-                collection.GetValue(in key,out bool found, out string value);
-                string tk =key, tv= value;
-
-                if (m_userBase64)
-                {
-                    E_StringByte64Utility.GetText64FromText(in tv, out tv);
-                }
+                collection.GetValue(in key, out bool found, out string value);
+                string tk = key, tv = value;
+                //E_StringByte64Utility.GetText64FromText(in tv, out tv);
 
                 if (found)
                     sb.Append(string.Format("\"{0}\":\"{1}\"\n", tk, tv));
             }
         }
     }
-    private static void Append(in IKeyPropertiesAsStringFullInteraction collection  , in StringBuilder sb)
+    private static void Append(in IKeyPropertiesAsStringFullInteraction collection, in StringBuilder sb)
     {
         string[] keys;
         collection.GetAllKey(out keys);
-        collection.GetTypeAliasNameAsString(out string typeName);
+        collection.GetAliasTypeName(out string typeName);
         collection.GetTypeAsString(out string typeFullname, out string assembly);
         //Type type;
         //System.Reflection.Assembly assembly;
-
-
 
         if (keys.Length > 0)
         {
@@ -242,12 +213,16 @@ public class UserPermaPrefImportExport
                 collection.GetValue(in key, out bool found, out string value);
 
                 string tk = key, tv = value;
-                if (m_userBase64)
-                {
-                    E_StringByte64Utility.GetText64FromText(in tv, out tv);
-                }
+
                 if (found)
+                {
+                    bool hasDangerousChar = collection.HasDangerousCharacter();
+                    if (hasDangerousChar)
+                    {
+                        E_StringByte64Utility.GetText64FromText(in tv, out tv);
+                    }
                     sb.Append(string.Format("\"{0}\":\"{1}\"\n", tk, tv));
+                }
             }
         }
     }
@@ -258,16 +233,17 @@ public class UserPermaPrefImportExport
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < dynamiqueStorage.m_dynamiqueStorage.Count; i++)
         {
-            IKeyPropertiesAsStringFullInteraction collection= dynamiqueStorage.m_dynamiqueStorage[i];
-            Append(in collection,in sb);
+            IKeyPropertiesAsStringFullInteraction collection = dynamiqueStorage.m_dynamiqueStorage[i];
+            Append(in collection, in sb);
         }
         dynmaiqueStorageAsText = sb.ToString();
     }
 
-    private static void GetContextAlphaClamp(in RecordContext context, out string folderName, in uint maxFileCharacter=32, in string replaceBy="_")
+    private static void GetContextAlphaClamp(in RecordContext context, out string folderName, in uint maxFileCharacter = 32, in string replaceBy = "_")
     {
-        string nameFileAlpha = string.Format("{0}_{1}_{2}_{3}", context.m_realLifeEventAliasID, context.m_computerAliasID,context.m_applicationAliasID, context.m_applicatoinVersion);
-        E_StringUtility.ConvertToAlphaNumByReplacing (nameFileAlpha, out string compressedName, in replaceBy);
+        //string nameFileAlpha = string.Format("{0}_{1}_{2}_{3}", context.m_realLifeEventAliasID, context.m_computerAliasID, context.m_applicationAliasID, context.m_applicatoinVersion);
+        string nameFileAlpha = string.Format("{0}_{1}", context.m_realLifeEventAliasID, context.m_computerAliasID);
+        E_StringUtility.ConvertToAlphaNumByReplacing(nameFileAlpha, out string compressedName, in replaceBy);
         E_StringUtility.Clamp(in compressedName, out folderName, in maxFileCharacter);
     }
 
@@ -282,14 +258,23 @@ public class UserPermaPrefImportExport
         pathUsed = "";
         if (!Directory.Exists(whereToStorePath))
         { return; }
-        string subFolderPath = whereToStorePath + "/" + subFolderProposition ;
-        string subFilePath = whereToStorePath + "/" + subFolderProposition + "/" + fileNameProposition;
-        if (!Directory.Exists(subFolderPath))
-            Directory.CreateDirectory(subFolderPath);
-        File.WriteAllText(subFilePath, textToStore);
+        pathUsed = GetFilePathAndCreateFolder(whereToStorePath, in subFolderProposition, fileNameProposition);
+
+        File.WriteAllText(pathUsed, textToStore);
 
 
         saved = true;
-        pathUsed = subFilePath;
     }
+
+    private static string GetFilePathAndCreateFolder(in string whereToStorePath, in string subFolderProposition, in string fileNameProposition)
+    {
+        string subFolderPath = whereToStorePath + ((E_StringUtility.IsFilled(in subFolderProposition) ? "/" + subFolderProposition : ""));
+        string subFilePath = subFolderPath + "/" + fileNameProposition;
+        if (!Directory.Exists(subFolderPath))
+            Directory.CreateDirectory(subFolderPath);
+        return subFilePath;
+    }
+
+
+
 }

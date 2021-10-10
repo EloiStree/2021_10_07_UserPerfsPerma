@@ -1,3 +1,4 @@
+using Eloi;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -29,15 +30,6 @@ public class PlayerPrefsPermaMono : MonoBehaviour
 }
 
 [System.Serializable]
-public class RecordContext
-{
-    public string m_applicationAliasID="Undefined";
-    public string m_realLifeEventAliasID="Undefined";
-    public string m_computerAliasID="Default";
-    public string m_applicatoinVersion="0.0.0";
-
-}
-[System.Serializable]
 public class UserContext {
     public string m_userAlias;
     public string m_userStringId;
@@ -47,34 +39,88 @@ public class UserContext {
 public class UserPermaPref
 {
     public UserContext m_userInfo = new UserContext();
+
+    public void GetUnthrustedTextValue(in string key,  out string value)
+    {
+        CheckThatUnthurstedTextExist();
+        m_unthrustedText.GetValue(key, out value);
+
+    }
+
     public AllSharpPrimitiveKeyValueStorageCollection m_primitivesStorage = new AllSharpPrimitiveKeyValueStorageCollection();
     public DynamiqueKeyValueStorageCollection m_dynamiqueStorage = new DynamiqueKeyValueStorageCollection();
 
-}
-[System.Serializable]
-public class UserPermaPrefWithContext : UserPermaPref
-{
-    public RecordContext m_context;
+    public void GetPrimtiveStringValue(in string key, out bool found, out string value)
+    {
+        m_primitivesStorage.m_unprotectedString.GetValue(in key, out found, out value);
+    }
 
+    public KeyPropertiesUntrustedText m_unthrustedText = new KeyPropertiesUntrustedText();
+
+    public UserPermaPref()
+    {
+        CheckThatUnthurstedTextExist();
+    }
+
+    public void SetUnthrustedText(in string key, in string value)
+    {
+        CheckThatUnthurstedTextExist();
+        m_unthrustedText.SetValue(in key, in value);
+    }
+
+    private void CheckThatUnthurstedTextExist()
+    {
+        if (m_unthrustedText == null)
+        {
+            m_unthrustedText = new KeyPropertiesUntrustedText();
+        }
+        m_dynamiqueStorage.AddIfNotContaining(m_unthrustedText);
+    }
+
+    public void SetUserId(in string value)
+    {
+        m_userInfo.m_userStringId = value;
+    }
+
+    public void SetUserIdAndAliasWithMailB64(in string mail)
+    {
+        E_StringByte64Utility.GetText64FromText(in mail, out string b64Mail);
+        SetUserId(b64Mail);
+        SetUserNameAlias(mail);
+    }
+    public void GetUserIdFromAsB64(out string b64IdUsed, out string mail) {
+        b64IdUsed = m_userInfo.m_userStringId;
+        E_StringByte64Utility.GetTextFromTextB64(in b64IdUsed, out bool converted, out mail); 
+    }
+
+    public void SetUserNameAlias(in string value)
+    {
+        m_userInfo.m_userAlias = value;
+    }
+
+    public void GetUserId(out string userId)
+    {
+        userId = m_userInfo.m_userStringId;
+    }
 }
 
 [System.Serializable]
 public class AllSharpPrimitiveKeyValueStorageCollection
 {
-   public KeyPropertiesBool           m_bool;
-   public KeyPropertiesByte           m_byte;
-   public KeyPropertiesSignByte       m_signByte;
-   public KeyPropertiesChar           m_char;
-   public KeyPropertiesDecimal        m_decimal;
-   public KeyPropertiesDouble         m_double;
-   public KeyPropertiesFloat          m_float;
-   public KeyPropertiesInt            m_int;
-   public KeyPropertiesUInt           m_uint;
-   public KeyPropertiesLong           m_long;
-   public KeyPropertiesULong          m_ulong;
-   public KeyPropertiesShort          m_short;
-   public KeyPropertiesUShort           m_ushot;
-   public KeyPropertiesUnprotectedString m_unprotectedString;
+   public KeyPropertiesBool           m_bool= new KeyPropertiesBool();
+   public KeyPropertiesByte           m_byte = new KeyPropertiesByte();
+   public KeyPropertiesSignByte       m_signByte = new KeyPropertiesSignByte();
+   public KeyPropertiesChar           m_char = new KeyPropertiesChar();
+   public KeyPropertiesDecimal        m_decimal = new KeyPropertiesDecimal();
+   public KeyPropertiesDouble         m_double = new KeyPropertiesDouble();
+   public KeyPropertiesFloat          m_float = new KeyPropertiesFloat();
+   public KeyPropertiesInt            m_int = new KeyPropertiesInt();
+   public KeyPropertiesUInt           m_uint = new KeyPropertiesUInt();
+   public KeyPropertiesLong           m_long = new KeyPropertiesLong();
+   public KeyPropertiesULong          m_ulong = new KeyPropertiesULong();
+   public KeyPropertiesShort          m_short = new KeyPropertiesShort();
+   public KeyPropertiesUShort           m_ushot = new KeyPropertiesUShort();
+   public KeyPropertiesUnprotectedString m_unprotectedString = new KeyPropertiesUnprotectedString();
     private object[] m_lightWayAccess=null;
     public void GetAllAsObject(out object [] all) {
         if (m_lightWayAccess != null) { 
@@ -100,10 +146,26 @@ public class AllSharpPrimitiveKeyValueStorageCollection
     };
     }
 
+    public void SetAsAlphaNumericString(string key, string value)
+    {
+        Eloi.E_StringUtility.ConvertToAlphaNumByReplacing(in value, out string protectedEventAlias);
+        SetString(key, protectedEventAlias);
+    }
+
+    public void SetString(string key, string value)
+    {
+        m_unprotectedString.SetValue(in key, in value);
+    }
 }
 public class DynamiqueKeyValueStorageCollection
 {
     public List<IKeyPropertiesAsStringFullInteraction> m_dynamiqueStorage = new List<IKeyPropertiesAsStringFullInteraction>();
+
+    public void AddIfNotContaining(IKeyPropertiesAsStringFullInteraction keyValueCollection) {
+        if (!m_dynamiqueStorage.Contains(keyValueCollection)) {
+            m_dynamiqueStorage.Add(keyValueCollection);
+        }
+    }
 }
 
 
@@ -178,7 +240,7 @@ public class KeyProperty <T> {
 //    public override void SetValue(in string key, in string value, out bool wasConverted)
 //    {
 //        string toConvert = value.Trim().ToLower();
-       
+
 //        switch (m_storedType)
 //        {
 //            case PrimitiveType._bool:
@@ -241,8 +303,12 @@ public class KeyProperty <T> {
 //    }
 //}
 
+public interface IKeyPropertiesAliasTypeName {
+    void GetAliasTypeName(out string aliasTypeName);
+}
+
 [System.Serializable]
-public class KeyProperties<T> : IKeyProperitiesKeysContainer, IKeyProperitiesAsGenericContainer<T>, IKeyProperitiesAsStringGet, IValueContainDangerousCharacter
+public class KeyProperties<T> : IKeyProperitiesAsGenericContainer<T>, IKeyProperitiesAsStringGet, IValueContainDangerousCharacter
 {
     public List<KeyProperty<T>> m_properties = new List<KeyProperty<T>>();
 
@@ -372,7 +438,7 @@ public class KeyProperties<T> : IKeyProperitiesKeysContainer, IKeyProperitiesAsG
     }
 }
 [System.Serializable]
-public abstract class KeyStringableProperties<T> : KeyProperties<T> , IKeyProperitiesAsStringGet, IKeyProperitiesAsStringSet, IKeyProperitiesAsStringContainer, IKeyPropertiesAsStringFullInteraction
+public abstract class KeyStringableProperties<T> : KeyProperties<T> , IKeyPropertiesAliasTypeName, IKeyProperitiesAsStringGet, IKeyProperitiesAsStringSet, IKeyProperitiesAsStringContainer, IKeyPropertiesAsStringFullInteraction
 {
     public void GetAllValue(out string[] values)
     {
@@ -402,6 +468,7 @@ public abstract class KeyStringableProperties<T> : KeyProperties<T> , IKeyProper
     public abstract void SetValue(in string key, in string value, out bool wasConverted);
 
     public abstract new bool HasDangerousCharacter();
+    public abstract void GetAliasTypeName(out string aliasTypeName);
 }
 
 [System.Serializable]
@@ -445,6 +512,12 @@ public class KeyPropertiesVector3 : KeyProperties<UnityEngine.Vector3>
 public class KeyPropertiesVector3Stringable : KeyStringableProperties<UnityEngine.Vector3>
 {
     public string m_valuesFormat = "[{0:0.00}:{1:0.00}:{2:0.00}]";
+
+    public override void GetAliasTypeName(out string aliasTypeName)
+    {
+        aliasTypeName = "Vector3";
+    }
+
     public override void GetValue(in string key, out bool found, out string value)
     {
         for (int i = 0; i < m_properties.Count; i++)
@@ -502,6 +575,10 @@ public class KeyPropertiesVector3Stringable : KeyStringableProperties<UnityEngin
 [System.Serializable]
 public class KeyPropertiesBigInteger : KeyStringableProperties<BigInteger>
 {
+    public override void GetAliasTypeName(out string aliasTypeName)
+    {
+        aliasTypeName = "Big Integer";
+    }
     public string m_valuesFormat = "[BI:{0}]";
     public override void GetValue(in string key, out bool found, out string value)
     {
@@ -552,7 +629,7 @@ public class KeyPropertiesBigInteger : KeyStringableProperties<BigInteger>
     }
 }
 public interface IKeyPropertiesAsStringFullInteraction
-: IKeyProperitiesAsStringContainer,  IKeyProperitiesAsStringGet, IKeyProperitiesAsStringSet, IKeyPropertiesAsStringTypeConvertion, IValueContainDangerousCharacter
+: IKeyProperitiesAsStringContainer, IKeyPropertiesAliasTypeName,  IKeyProperitiesAsStringGet, IKeyProperitiesAsStringSet, IKeyPropertiesAsStringTypeConvertion, IValueContainDangerousCharacter
 { }
 public interface IKeyPropertiesFullInteraction<T> : IKeyPropertiesAsStringFullInteraction, IKeyProperitiesAsGenericContainer<T>
 { }
@@ -605,8 +682,12 @@ public interface IKeyProperityAsGeneric<T>
 
 
 [System.Serializable]
-public class KeyPropertiesUnsaveText : KeyStringableProperties<string>
+public class KeyPropertiesUntrustedText : KeyStringableProperties<string>
 {
+    public override void GetAliasTypeName(out string aliasTypeName)
+    {
+        aliasTypeName = "Untrusted Text";
+    }
     public string m_valuesFormat = "[TEXT:{0}]";
     public override void GetValue(in string key, out bool found, out string value)
     {
@@ -652,5 +733,96 @@ public class KeyPropertiesUnsaveText : KeyStringableProperties<string>
             KeyProperty<string> textKey = new KeyProperty<string>(key, valueUnsaveText);
             m_properties.Add(textKey);
         
+    }
+}
+
+
+[System.Serializable]
+public class RecordContext
+{
+    public string m_applicationAliasID = "Undefined";
+    public string m_realLifeEventAliasID = "Undefined";
+    public string m_computerAliasID = "Default";
+    public string m_applicatoinVersion = "0.0.0";
+
+}
+
+
+
+[System.Serializable]
+public class KP_EventTerminalContextText : KeyStringableProperties<RecordContext>
+{
+    public override void GetAliasTypeName(out string aliasTypeName)
+    {
+        aliasTypeName = "Event Terminal Context";
+    }
+    public string m_valuesFormat = "[CONTEXT:{0}|{1}|{2}|{3}]";
+    public override void GetValue(in string key, out bool found, out string value)
+    {
+        for (int i = 0; i < m_properties.Count; i++)
+        {
+            m_properties[i].IsKeyEqualAndNotEmpty(in key, out bool areEqual);
+            if (areEqual)
+            {
+                found = true;
+                value = string.Format(m_valuesFormat,
+                    m_properties[i].m_value.m_realLifeEventAliasID,
+                    m_properties[i].m_value.m_computerAliasID,
+                    m_properties[i].m_value.m_applicationAliasID,
+                    m_properties[i].m_value.m_applicatoinVersion);
+                return;
+            }
+        }
+        found = false;
+        value = "";
+    }
+
+    public override bool HasDangerousCharacter()
+    {
+        return true;
+    }
+
+    public override void SetValue(in string key, in string value, out bool wasConverted)
+    {
+        string toConvert = value.Trim().ToLower();
+        if (toConvert.Length < "[CONTEXT:".Length + 1)
+        {
+            wasConverted = false;
+            return;
+        }
+        string valueUnsaveText = toConvert.Substring("[CONTEXT:".Length, toConvert.Length - "[CONTEXT:".Length - 1);
+        string[] tokens = valueUnsaveText.Split('|');
+        string realEvent="", computer = "", application = "", version = "";
+        if (tokens.Length >= 1)
+            realEvent = tokens[0];
+        if (tokens.Length >= 2)
+            computer = tokens[1];
+        if (tokens.Length >= 3)
+            application = tokens[2];
+        if (tokens.Length >= 4)
+            version = tokens[3];
+
+        wasConverted = true;
+        for (int i = 0; i < m_properties.Count; i++)
+        {
+            m_properties[i].IsKeyEqualAndNotEmpty(in key, out bool areEqual);
+            if (areEqual)
+            {
+                m_properties[i].m_value.m_realLifeEventAliasID = realEvent;
+                m_properties[i].m_value.m_computerAliasID = computer;
+                m_properties[i].m_value.m_applicationAliasID = application;
+                m_properties[i].m_value.m_applicatoinVersion = version;
+                return;
+            }
+        }
+        RecordContext newValue = new RecordContext();
+        newValue.m_realLifeEventAliasID = realEvent;
+        newValue.m_computerAliasID = computer;
+        newValue.m_applicationAliasID = application;
+        newValue.m_applicatoinVersion = version;
+        KeyProperty<RecordContext> textKey = new KeyProperty<RecordContext>(key, newValue);
+  
+        m_properties.Add(textKey);
+
     }
 }

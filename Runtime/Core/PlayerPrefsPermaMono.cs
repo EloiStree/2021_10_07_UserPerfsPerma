@@ -40,10 +40,90 @@ public class UserPermaPref
 {
     public UserContext m_userInfo = new UserContext();
 
-    public void GetUnthrustedTextValue(in string key,  out string value)
+    public string UserId { get { return m_userInfo.m_userStringId; } set { m_userInfo.m_userStringId = value; } }
+
+    public void GetUnthrustedTextValue(in string key, out string value)
     {
         CheckThatUnthurstedTextExist();
         m_unthrustedText.GetValue(key, out value);
+
+    }
+
+    public void TryToGuestKeyValueAsString(in string key, out string value)
+    {
+        m_primitivesStorage.GetAllAsObject(out object[] collections);
+      
+        bool found;
+        for (int i = 0; i < collections.Length; i++)
+        {
+            IKeyProperitiesAsStringGet collectionTarget = collections[i] as IKeyProperitiesAsStringGet;
+            if (collectionTarget != null) {
+                collectionTarget.GetValue(in key, out found, out value);
+                if (found) {
+                    return;
+                }
+            }
+        }
+        List<IKeyPropertiesAsStringFullInteraction> dynamicCollections = m_dynamiqueStorage.m_dynamiqueStorage;
+        for (int i = 0; i < dynamicCollections.Count; i++)
+        {
+            IKeyPropertiesGenericGet collectionTarget = dynamicCollections[i] as IKeyPropertiesGenericGet; ;
+            if (collectionTarget != null)
+            {
+                collectionTarget.GetValueObject(in key, out found, out object objRecovered);
+                if (found)
+                {
+                    value = objRecovered.ToString();
+                    return;
+                }
+            }
+        }
+        value = "";
+    }
+
+    public  void AppendKeysAsDistinctIn(ref Dictionary<string,string> keys)
+    {
+        if (keys == null)
+            keys = new Dictionary<string, string>();
+        m_primitivesStorage.GetAllAsObject(out object[] collections);
+        
+        for (int i = 0; i < collections.Length; i++)
+        {
+            IKeyProperitiesKeysContainer collectionTarget = collections[i] as IKeyProperitiesKeysContainer;
+            if (collectionTarget != null)
+            {
+                collectionTarget.GetAllKey(out string [] k);
+                for (int j = 0; j < k.Length; j++)
+                {
+                    if (!keys.ContainsKey(k[j]))
+                        keys.Add(k[j], null);
+
+                }
+            }
+        }
+        List<IKeyPropertiesAsStringFullInteraction> dynamicCollections = m_dynamiqueStorage.m_dynamiqueStorage;
+        for (int i = 0; i < dynamicCollections.Count; i++)
+        {
+            IKeyProperitiesKeysContainer collectionTarget = dynamicCollections[i] as IKeyProperitiesKeysContainer; ;
+            if (collectionTarget != null)
+            {
+                collectionTarget.GetAllKey(out string[] k);
+                for (int j = 0; j < k.Length; j++)
+                {
+                    if (!keys.ContainsKey(k[j]))
+                        keys.Add(k[j], null);
+                }
+            }
+        }
+    }
+
+    public void GetUnthrustedTextValue(in string key,out bool found, out string value)
+    {
+        CheckThatUnthurstedTextExist();
+        m_unthrustedText.Exists(in key, out found);
+        if (found)
+            m_unthrustedText.GetValue(key, out value);
+        else value = "";
 
     }
 
@@ -52,7 +132,10 @@ public class UserPermaPref
 
     public void GetPrimtiveStringValue(in string key, out bool found, out string value)
     {
-        m_primitivesStorage.m_unprotectedString.GetValue(in key, out found, out value);
+        m_primitivesStorage.m_unprotectedString.Exists(in key, out found);
+        if (found)
+            m_primitivesStorage.m_unprotectedString.GetValue(in key, out value);
+        else value = "";
     }
 
     public KeyPropertiesUntrustedText m_unthrustedText = new KeyPropertiesUntrustedText();
@@ -61,6 +144,13 @@ public class UserPermaPref
     {
         CheckThatUnthurstedTextExist();
     }
+    public UserPermaPref(string id)
+    {
+        CheckThatUnthurstedTextExist();
+        SetUserId(id);
+    }
+
+  
 
     public void SetUnthrustedText(in string key, in string value)
     {
@@ -88,10 +178,46 @@ public class UserPermaPref
         SetUserId(b64Mail);
         SetUserNameAlias(mail);
     }
+
+    public void GetPrimtiveStringFloat(in string key, out bool exist, out float valueRecovert, float ifNotExisting=0)
+    {
+        m_primitivesStorage.m_float.Exists(key, out exist);
+        if (exist)
+            m_primitivesStorage.m_float.GetValue(in key, out valueRecovert);
+        else valueRecovert = ifNotExisting;
+    }
+
     public void GetUserIdFromAsB64(out string b64IdUsed, out string mail) {
         b64IdUsed = m_userInfo.m_userStringId;
         E_StringByte64Utility.GetTextFromTextB64(in b64IdUsed, out bool converted, out mail); 
     }
+
+    public void SetPrimitive(in string key, in float value)
+    {
+        m_primitivesStorage.m_float.SetValue(in key, in value);
+    }
+
+    public void SetPrimitive(in string key, in bool value)
+    {
+        m_primitivesStorage.m_bool.SetValue(in key, in value);
+    }
+    public void SetPrimitive(in string key, in int value)
+    {
+        m_primitivesStorage.m_int.SetValue(in key, in value);
+    }
+
+    public void PrimitiveExistBool(in string key, out bool exist)
+    {
+        m_primitivesStorage.m_bool.Exists(in key, out exist);
+    }
+
+    public void PrimitiveExistString(in string key, out bool exist)
+    {
+        m_primitivesStorage.m_unprotectedString.Exists(in key, out exist);
+    }
+
+
+
 
     public void SetUserNameAlias(in string value)
     {
@@ -308,7 +434,7 @@ public interface IKeyPropertiesAliasTypeName {
 }
 
 [System.Serializable]
-public class KeyProperties<T> : IKeyProperitiesAsGenericContainer<T>, IKeyProperitiesAsStringGet, IValueContainDangerousCharacter
+public class KeyProperties<T> : IKeyProperitiesAsGenericContainer<T>, IKeyProperitiesAsStringGet, IValueContainDangerousCharacter, IKeyPropertiesGenericGet
 {
     public List<KeyProperty<T>> m_properties = new List<KeyProperty<T>>();
 
@@ -344,6 +470,30 @@ public class KeyProperties<T> : IKeyProperitiesAsGenericContainer<T>, IKeyProper
     {
         GetTypeOfStorage(out Type type, out Assembly assembly);
         typeOfStorage = string.Format("{0}, {1}", type, assembly);
+    }
+
+    public void GetTypeOfObjectStored(out Type typeOfStorage, out Assembly assembly)
+    {
+        assembly=typeof(T).Assembly;
+        typeOfStorage= typeof(T);
+    }
+
+    public void GetValueObject(in string key, out bool found, out object obj)
+    {
+        Exists(in key, out found);
+        if (found)
+        {
+            GetValue(in key, out T foundObject);
+            obj = foundObject;
+        }
+        else obj = null;
+    }
+
+    public void GetValueObjectWithType(in string key, out Type typeOfStorage, out Assembly assembly, out bool found, out object obj)
+    {
+        GetTypeOfObjectStored(out typeOfStorage, out assembly);
+        GetValueObject(in key, out found, out obj);
+
     }
 
     public void GetTypeOfStorage(out Type type, out Assembly assembly )
@@ -398,6 +548,7 @@ public class KeyProperties<T> : IKeyProperitiesAsGenericContainer<T>, IKeyProper
         value = "";
     
     }
+
 
     public virtual bool HasDangerousCharacter() {
         return false;
@@ -635,49 +786,58 @@ public interface IKeyPropertiesFullInteraction<T> : IKeyPropertiesAsStringFullIn
 { }
 
 public interface IValueContainDangerousCharacter {
-    public bool HasDangerousCharacter();
+     bool HasDangerousCharacter();
 }
 
 public interface IKeyPropertiesAsStringTypeConvertion
 {
-    public void GetTypeAliasNameAsString(out string typeName);
-    public void GetTypeAsString(out string typeFullname, out string assemblyName);
+     void GetTypeAliasNameAsString(out string typeName);
+     void GetTypeAsString(out string typeFullname, out string assemblyName);
 }
 
 public interface IKeyProperitiesKeysContainer {
 
-    public void GetCount(out uint count);
-    public void GetAllKey(out string[] key);
+     void GetCount(out uint count);
+     void GetAllKey(out string[] key);
 }
 public interface IKeyProperitiesAsStringContainer : IKeyProperitiesKeysContainer
 {
-    public void GetAllValue(out string[] value);
+     void GetAllValue(out string[] value);
 }
 public interface IKeyProperitiesAsGenericContainer<T> : IKeyProperitiesKeysContainer
 {
-    public void GetAllValue(out T[] value);
-    public void GetTypeOfStorage(out System.Type typeOfStorage, out System.Reflection.Assembly assembly);
-    public void GetTypeOfAsFullStringDescription(out string typeOfStorage);
+     void GetAllValue(out T[] value);
+     void GetTypeOfStorage(out System.Type typeOfStorage, out System.Reflection.Assembly assembly);
+     void GetTypeOfAsFullStringDescription(out string typeOfStorage);
 }
+
+public interface IKeyPropertiesGenericGet {
+
+    void GetValueObjectWithType(in string key, out System.Type typeOfStorage, out System.Reflection.Assembly assembly,out bool found, out object obj);
+    void GetValueObject(in string key, out bool found, out object obj);
+    void GetTypeOfObjectStored(out System.Type typeOfStorage, out System.Reflection.Assembly assembly);
+
+}
+
 public interface IKeyProperitiesAsStringGet
 {
-    public void GetValue(in string key, out bool found, out string value);
+     void GetValue(in string key, out bool found, out string value);
 }
 public interface IKeyProperitiesAsStringSet
 {
-    public void SetValue(in string key, in string value, out bool wasConverted);
+     void SetValue(in string key, in string value, out bool wasConverted);
 }
 
 public interface IKeyProperityAsString
 {
-    public void GetKey(out string key);
-    public void GetValue(out string value);
+     void GetKey(out string key);
+     void GetValue(out string value);
 }
 
 public interface IKeyProperityAsGeneric<T>
 {
-    public void GetKey(out string key);
-    public void GetValue(out T value);
+     void GetKey(out string key);
+     void GetValue(out T value);
 }
 
 

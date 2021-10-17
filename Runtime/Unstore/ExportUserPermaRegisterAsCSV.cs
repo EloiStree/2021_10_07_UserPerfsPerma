@@ -9,13 +9,21 @@ public class ExportUserPermaRegisterAsCSV : MonoBehaviour
 {
     public UserPermaPrefRegisterMono m_register;
 
-    public string m_csvNameWithExtension="default.csv";
+    public string m_csvNameWithExtension = "default.csv";
+    public string m_csvAllNameWithExtension = "defaultall.csv";
     public string[] m_columnNameWanted=new string[] { "mail", "firstname", "lastname","bestscore"  };
     [TextArea(0,10)]
     public string m_csvDebug;
+    [TextArea(0, 10)]
+    public string m_csvDebugAll;
 
-    public void GetProposeCSVName(out string csvName) {
+    public void GetProposeCSVName(out string csvName)
+    {
         csvName = m_csvNameWithExtension;
+    }
+    public void GetProposeCSVNameAll(out string csvName)
+    {
+        csvName = m_csvAllNameWithExtension;
     }
 
     [ContextMenu("Generate csv ")]
@@ -30,9 +38,13 @@ public class ExportUserPermaRegisterAsCSV : MonoBehaviour
     [ContextMenu("Generate csv with all")]
     public void ExportCSVWithAllDataInIt()
     {
-        UserPermaPrefExportToCSV.ExportCSVWithAllDataInIt(in m_register, out m_csvDebug);
+        UserPermaPrefExportToCSV.ExportCSVWithAllDataInIt(in m_register, out m_csvDebugAll);
     }
- 
+    public void ExportCSVWithAllDataInIt(out string csv)
+    {
+        UserPermaPrefExportToCSV.ExportCSVWithAllDataInIt(in m_register, out csv);
+    }
+
 
 
 }
@@ -77,11 +89,11 @@ public class UserPermaPrefExportToCSV{
         for (int i = 0; i < users.Length; i++)
         {
             columnInProgress.Clear();
-            columnInProgress.Add(users[i].UserId);
+            columnInProgress.Add(users[i].UserId.Trim()) ;
             for (int j = 0; j < columnNameRequested.Length; j++)
             {
                 users[i].TryToGuestKeyValueAsString(in columnNameRequested[j], out string value);
-                columnInProgress.Add(value);
+                columnInProgress.Add(value.Trim());
             }
 
 

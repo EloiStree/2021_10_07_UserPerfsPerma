@@ -24,6 +24,66 @@ public class UserPermaPrefRegisterMono : MonoBehaviour
     {
         m_register.AppendKeysAsDistinctIn(ref columnDico);
     }
+
+  
+    public void Push(in string userId, in string fieldKey, in string textValue)
+    {
+
+        if (!m_register.IsUserExist(in userId))
+        {
+            m_register.AddUser(in userId);
+        }
+
+        m_register.SearchFor(in userId, out bool found, out UserPermaPref userInfo);
+        //if (m_overrideByDefault) {
+        userInfo.SetUnthrustedText(fieldKey, textValue);
+        //}
+        m_register.OverrideOrAdd(in userInfo);
+    }
+    public void Push(in string userId,in string keyId, in bool value)
+    {
+
+        GetOrCreateUserInfo(in userId, out m_register, out UserPermaPref userInfo);
+
+        userInfo.SetPrimitive(keyId, value);
+
+        SendBackUserUserInfo(in userInfo);
+    }
+    public void Push(in string userId, in string keyId, in float value)
+    {
+
+        GetOrCreateUserInfo(in userId, out m_register, out UserPermaPref userInfo);
+
+        userInfo.SetPrimitive(keyId, value);
+
+        SendBackUserUserInfo(in userInfo);
+    }
+    public void Push(in string userId, in string keyId, in int value)
+    {
+
+        GetOrCreateUserInfo(in userId, out m_register, out UserPermaPref userInfo);
+
+        userInfo.SetPrimitive(keyId, value);
+
+        SendBackUserUserInfo(in userInfo);
+    }
+
+    private void SendBackUserUserInfo(in UserPermaPref userInfo)
+    {
+        m_register.OverrideOrAdd(in userInfo);
+    }
+
+    private void GetOrCreateUserInfo(in string userId, out AbstractUserPermaPrefRegister register, out UserPermaPref userInfo)
+    {
+        register = m_register;
+        if (!register.IsUserExist(in userId))
+        {
+            register.AddUser(in userId);
+        }
+
+        register.SearchFor(in userId, out bool found, out userInfo);
+    }
+
 }
 public abstract class AbstractUserPermaPrefRegister
 {

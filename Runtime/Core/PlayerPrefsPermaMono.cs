@@ -117,6 +117,8 @@ public class UserPermaPref
         }
     }
 
+   
+
     public void GetUnthrustedTextValue(in string key,out bool found, out string value)
     {
         CheckThatUnthurstedTextExist();
@@ -137,6 +139,8 @@ public class UserPermaPref
             m_primitivesStorage.m_unprotectedString.GetValue(in key, out value);
         else value = "";
     }
+
+   
 
     public KeyPropertiesUntrustedText m_unthrustedText = new KeyPropertiesUntrustedText();
 
@@ -184,6 +188,13 @@ public class UserPermaPref
         m_primitivesStorage.m_float.Exists(key, out exist);
         if (exist)
             m_primitivesStorage.m_float.GetValue(in key, out valueRecovert);
+        else valueRecovert = ifNotExisting;
+    }
+    public void GetPrimtiveStringBool(in string key, out bool exist, out bool valueRecovert, bool ifNotExisting = false)
+    {
+        m_primitivesStorage.m_bool.Exists(key, out exist);
+        if (exist)
+            m_primitivesStorage.m_bool.GetValue(in key, out valueRecovert);
         else valueRecovert = ifNotExisting;
     }
 
@@ -652,7 +663,6 @@ public class KeyPropertiesShort : KeyProperties<short> { }
 public class KeyPropertiesUShort : KeyProperties<ushort> { }
 
 
-
 [System.Serializable]
 public class KeyPropertiesVector3 : KeyProperties<UnityEngine.Vector3>
 {
@@ -719,6 +729,7 @@ public class KeyPropertiesVector3Stringable : KeyStringableProperties<UnityEngin
         }
         else wasConverted = false;
     }
+
 }
 
 

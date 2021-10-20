@@ -22,7 +22,7 @@ public class UI_UserPermaPrefMonoToTextDebug : MonoBehaviour
     {
         string text = m_text.text;
         UserPermaPref user = m_user.User;
-        UserPermaPrefImportImport.ImportUserPermaPrefFromText(in text, out bool converted, in user);
+        UserPermaPrefImport.ImportUserPermaPrefFromText(in text, out bool converted, in user);
         m_user.Override(user);
 
     }

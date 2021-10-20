@@ -5,7 +5,7 @@ using System.IO;
 using System.Text.RegularExpressions;
 using UnityEngine;
 
-public class UserPermaPrefImportImport
+public class UserPermaPrefImport
 {
     public enum ReadingCollection { Primitive, Dynamique }
 
@@ -72,7 +72,6 @@ public class UserPermaPrefImportImport
                 ExtractKeyValueOf(in line, out bool converted, out string key, out string value);
                 if (converted)
                 {
-                    // Debug.Log(string.Format("Value|{0}|{1}", collectionTypeEnum, line));
                     UserPermaPref pref =playerWithContext;
                     if (collectionTypeEnum == ReadingCollection.Primitive)
                     {
@@ -106,11 +105,11 @@ public class UserPermaPrefImportImport
     private static void PushDynamique(in string collectionAlias, in string collectionType, in string collectionAssembly, out bool converted, in string key, in string value, in UserPermaPref userPref)
     {
         converted = false;
-        List<IKeyPropertiesAsStringFullInteraction> collecitons = userPref.m_dynamiqueStorage.m_dynamiqueStorage;
-        for (int i = 0; i < collecitons.Count; i++)
+        List<IKeyPropertiesAsStringFullInteraction> collections = userPref.m_dynamiqueStorage.m_dynamiqueStorage;
+        for (int i = 0; i < collections.Count; i++)
         {
-            collecitons[i].GetAliasTypeName(out string cAlias);
-            collecitons[i].GetTypeAsString(out string cType, out string cAssembly);
+            collections[i].GetAliasTypeName(out string cAlias);
+            collections[i].GetTypeAsString(out string cType, out string cAssembly);
             //Debug.Log("Try to parse:" + string.Join("|", cAlias, cType, cAssembly) + " >To> " +
             // string.Join("|", collectionAlias, collectionType, collectionAssembly));
             if (E_StringUtility.AreEquals(in cAlias, in collectionAlias, true, true)
@@ -122,13 +121,12 @@ public class UserPermaPrefImportImport
                 //          string.Join("|", collectionAlias, collectionType, collectionAssembly));
 
                 string valueToSend = value;
-                if (collecitons[i].HasDangerousCharacter())
+                if (collections[i].HasDangerousCharacter())
                 {
                     E_StringByte64Utility.GetTextFromTextB64(in valueToSend, out bool b64Converted, out valueToSend);
 
                 }
-
-                collecitons[i].SetValue(in key, in valueToSend, out bool convertedAsValue);
+                collections[i].SetValue(in key, in valueToSend, out bool convertedAsValue);
                 if (convertedAsValue)
                 {
                     converted = true;
@@ -225,7 +223,7 @@ public class UserPermaPrefImportImport
         }
         else if (tempAlias == "string")
         {
-            string pvalue = value.ToLower();
+            string pvalue = value;//.ToLower();
             userPref.m_primitivesStorage.m_unprotectedString.SetValue(in key, in pvalue);
         }
     }

@@ -7,7 +7,7 @@ using System.Numerics;
 using System.Reflection;
 using UnityEngine;
 
-public class PlayerPrefsPermaMono : MonoBehaviour
+public class Experiment_PlayerPrefsPermaMono : MonoBehaviour
 {
     public KeyPropertiesInt m_testInt;
     public KeyPropertiesVector3 m_v3;
@@ -20,13 +20,57 @@ public class PlayerPrefsPermaMono : MonoBehaviour
     public string m_newKey;
     public bool m_wasPushedIn;
     public string m_valueOfVector3NewKey;
-
+    
+    
+    public KP_EventTerminalContextText m_terminals = new KP_EventTerminalContextText();
+    public RecordContext[] m_context;
+    public string [] m_contextValues;
+    public UserPermaPref user;
+    public RecordContext[] m_contextExportImport;
     private void Awake()
     {
         m_vector3StringAble.GetValue(m_key, out m_found, out m_valueOfVector3);
         m_vector3StringAble.SetValue(m_newKey, in m_valueOfVector3 , out m_wasPushedIn);
         m_vector3StringAble.GetValue(m_newKey, out m_found, out m_valueOfVector3NewKey);
+
+        m_contextValues = new string[m_context.Length];
+        for (int i = 0; i < m_context.Length; i++)
+        {
+            m_terminals.SetValue("" + i, in m_context[i]);
+            m_terminals.GetValue("" + i, out bool found, out m_contextValues[i]);
+            
+        }
+        user.m_dynamiqueStorage.AddIfNotContaining(m_terminals);
+        user.m_dynamiqueStorage.AddIfNotContaining(m_vector3StringAble);
+        foreach (var item in user.m_dynamiqueStorage.m_dynamiqueStorage)
+        {
+            item.GetAllKey(out string[] keyImport);
+            item.GetAllValue(out string[] valueImport);
+            m_keyExport.AddRange(keyImport);
+            m_valueExport.AddRange(valueImport);
+        }
+        UserPermaPrefImportExport.ConvertToExportableText(in user, out string exportText);
+        m_textExported = exportText;
+        user = new UserPermaPref("you");
+        UserPermaPrefImport.ImportUserPermaPrefFromText(in exportText, out bool converted, in user);
+        user.m_dynamiqueStorage.AddIfNotContaining(new KP_EventTerminalContextText());
+        //user.m_dynamiqueStorage.AddIfNotContaining(new KeyPropertiesVector3Stringable());
+        foreach (var item in user.m_dynamiqueStorage.m_dynamiqueStorage)
+        {
+            item.GetAllKey(out string [] keyImport);
+            item.GetAllValue(out string[] valueImport );
+            m_keyImport.AddRange(keyImport);
+            m_valueImport.AddRange(valueImport);
+        }
     }
+
+    [TextArea(0, 10)]
+    public string m_textExported;
+
+    public List<string> m_keyExport;
+    public List<string> m_valueExport;
+    public List<string> m_keyImport;
+    public List<string> m_valueImport;
 }
 
 [System.Serializable]
@@ -317,6 +361,7 @@ public class KeyProperty <T> {
     {
         m_key = key;
         m_value = properity;
+       
     }
 
     public void IsKeyEqualAndNotEmpty(in string key, out bool areEqual, bool ignoreCase=true, bool trim=true)
@@ -892,7 +937,7 @@ public class KeyPropertiesUntrustedText : KeyStringableProperties<string>
 
     public override void SetValue(in string key, in string value, out bool wasConverted)
     {
-        string toConvert = value.Trim().ToLower();
+        string toConvert = value.Trim();
         if (toConvert.Length < "[TEXT:".Length+1)
         {
             wasConverted = false;

@@ -5,7 +5,7 @@ using System.IO;
 using System.Text.RegularExpressions;
 using UnityEngine;
 
-public class UserPermaPrefImportImport
+public class UserPermaPrefImport
 {
     public enum ReadingCollection { Primitive, Dynamique }
 

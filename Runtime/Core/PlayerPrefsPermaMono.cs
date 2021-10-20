@@ -551,7 +551,16 @@ public class KeyProperties<T> : IKeyProperitiesAsGenericContainer<T>, IKeyProper
             if (areEqual)
             {
                 found = true;
+                if (m_properties[i].m_value is string)
+                {
+                    value = m_properties[i].m_value as string;
+                    if (value == null)
+                        value = m_properties[i].m_value.ToString();
+                }
+
+                else {
                 value = m_properties[i].m_value.ToString();
+                }
                 return;
             }
         }
@@ -868,7 +877,7 @@ public class KeyPropertiesUntrustedText : KeyStringableProperties<string>
             if (areEqual)
             {
                 found = true;
-                value = string.Format(m_valuesFormat, m_properties[i].m_value.ToString());
+                value = string.Format(m_valuesFormat, m_properties[i].m_value);
                 return;
             }
         }

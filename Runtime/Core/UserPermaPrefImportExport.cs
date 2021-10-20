@@ -17,11 +17,13 @@ public class UserPermaPrefImportExport
 
     public static void SaveAsFile(in string directoryPath,in UserPermaPref user)
     {
+        E_FilePathUnityUtility.AllBackslash(in directoryPath, out string newDirePath);
+        //E_DebugLog.H("Humm???:" + newDirePath);
         E_StringByte64Utility.GetText64FromText(in user.m_userInfo.m_userStringId, out string b64ID);
-        if (!Directory.Exists(directoryPath)) {
-            Directory.CreateDirectory(directoryPath);
+        if (!Directory.Exists(newDirePath)) {
+            Directory.CreateDirectory(newDirePath);
         }
-        string filePath= directoryPath+"/" + b64ID + FileExtensionName;
+        string filePath= newDirePath + "/" + b64ID + FileExtensionName;
         ConvertToExportableText(in user, out string text);
         File.WriteAllText(filePath, text);
     }
@@ -35,12 +37,10 @@ public class UserPermaPrefImportExport
     {
         subFolderProposition = "";
         string nameFileAlpha = string.Format("{0}_{1}", user.m_userInfo.m_userAlias, user.m_userInfo.m_userStringId);
-
         E_StringUtility.ConvertToAlphaNumByReplacing(in nameFileAlpha, out nameFileAlpha, in m_defaultReplaceAlphaNum);
         E_StringUtility.Clamp(in nameFileAlpha, out nameFileAlpha, in m_defaultMaxFileSize);
 
         fileNameProposition = string.Format("{0}.userperfperma", nameFileAlpha);
-
 
         GetSaveProposition(in user.m_userInfo, out string userInfo);
         GetSaveProposition(in user.m_primitivesStorage, out string textPrimitive);

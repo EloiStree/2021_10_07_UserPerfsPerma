@@ -37,7 +37,7 @@ public class UI_ImportToExcelNoOptiDemo : MonoBehaviour
         for (int i = 0; i < paths.Length; i++)
         {
             UserPermaPref user = new UserPermaPref();
-            UserPermaPrefImportImport.ImportUserPermaPrefFromPath(in paths[i],
+            UserPermaPrefImport.ImportUserPermaPrefFromPath(in paths[i],
                 in user, out bool wasConvertedWithoutError);
             if (wasConvertedWithoutError) {
                 m_usersLoaded.Users.AddOrOverrideByUserId(in user);

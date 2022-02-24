@@ -283,6 +283,14 @@ public class UserPermaPref
     {
         userId = m_userInfo.m_userStringId;
     }
+
+    public void GetPrimitiveInt(in string key, out bool foundDay, out int lastPlayedDay)
+    {
+        m_primitivesStorage.m_int.Exists(in key, out foundDay);
+        if (foundDay)
+            m_primitivesStorage.m_int.GetValue(in key, out lastPlayedDay);
+        else lastPlayedDay = -1;
+    }
 }
 
 [System.Serializable]

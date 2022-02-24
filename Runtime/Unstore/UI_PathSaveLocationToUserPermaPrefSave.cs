@@ -36,6 +36,7 @@ public class UI_PathSaveLocationToUserPermaPrefSave : MonoBehaviour
         }
 
         UserPermaPref user = m_user.User;
-        UserPermaPrefImportExport.SaveAsFile(in path, in user);
+        Eloi.IMetaAbsolutePathDirectoryGet userPath = new Eloi.MetaAbsolutePathDirectory(path);
+        UserPermaPrefImportExport.SaveAsFile(in userPath, in user);
     }
 }

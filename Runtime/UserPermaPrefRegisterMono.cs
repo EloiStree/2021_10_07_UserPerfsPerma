@@ -8,6 +8,15 @@ public class UserPermaPrefRegisterMono : MonoBehaviour
 {
     public AbstractUserPermaPrefRegister m_register = new DefaultUserPermaPrefRegister();
 
+
+    public UserPermaPref[] m_debugUsers;
+
+     [ContextMenu("Load list of users for debug")]
+    public void LoadListOfUsersAsDebug() {
+        m_register.GetAllUserPermaPref(out m_debugUsers);
+    }
+
+
     public void GetRegister(out AbstractUserPermaPrefRegister register) => register = m_register;
 
     public AbstractUserPermaPrefRegister GetRegisterRef()
@@ -25,7 +34,15 @@ public class UserPermaPrefRegisterMono : MonoBehaviour
         m_register.AppendKeysAsDistinctIn(ref columnDico);
     }
 
-  
+    public void Push(in string userId, in UserPermaPref user)
+    {
+        if (!m_register.IsUserExist(in userId))
+        {
+            m_register.AddUser(in userId);
+        }
+        m_register.OverrideOrAdd(in user);
+    }
+
     public void Push(in string userId, in string fieldKey, in string textValue)
     {
 
@@ -101,6 +118,8 @@ public abstract class AbstractUserPermaPrefRegister
     public abstract void GetAllUserPermaPref(out UserPermaPref[] usersInfo);
     public abstract void Flush();
     public abstract void AppendKeysAsDistinctIn(ref Dictionary<string,string> containerDico);
+
+   
 }
 
 public class DefaultUserPermaPrefRegister : AbstractUserPermaPrefRegister

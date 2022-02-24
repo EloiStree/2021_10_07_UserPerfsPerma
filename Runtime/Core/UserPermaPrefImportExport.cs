@@ -15,10 +15,11 @@ public class UserPermaPrefImportExport
     public static string m_defaultReplaceAlphaNum = "_";
     public static uint m_defaultMaxFileSize = 200;
 
-    public static void SaveAsFile(in string directoryPath,in UserPermaPref user)
+    public static void SaveAsFile(in IMetaAbsolutePathDirectoryGet directoryPath,in UserPermaPref user)
     {
-        E_FilePathUnityUtility.AllBackslash(in directoryPath, out string newDirePath);
+        string newDirePath = directoryPath.GetPath();
         E_StringByte64Utility.GetText64FromText(in user.m_userInfo.m_userStringId, out string b64ID);
+
         if (!Directory.Exists(newDirePath)) {
             Directory.CreateDirectory(newDirePath);
         }

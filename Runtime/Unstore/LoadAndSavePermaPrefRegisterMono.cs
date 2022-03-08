@@ -11,7 +11,34 @@ public class LoadAndSavePermaPrefRegisterMono : MonoBehaviour
     public ExportUserPermaRegisterAsCSV m_csvExported;
     public AbstractMetaAbsolutePathDirectoryMono m_whereToStore;
     public SearchOption m_importType = SearchOption.AllDirectories;
-  
+
+    public void GetUserFromCache(in string userId, out UserPermaPref currentUser)
+    {
+        m_register.GetRegister(out AbstractUserPermaPrefRegister register);
+        register.SearchFor(in userId, out bool found, out UserPermaPref user);
+        if (found)
+            currentUser = user;
+        else currentUser = new UserPermaPref(userId);
+    }
+
+    public void LoadUserFromDiskInCache(in string userId)
+    {
+        UserPermaPrefImportExport.GetFileNameFromUserId(in userId, out string fileName);
+        string[] paths = Directory.GetFiles(m_whereToStore.GetPath()
+              , "*" + UserPermaPrefImportExport.FileExtensionName, m_importType);
+
+        for (int i = 0; i < paths.Length; i++)
+        {
+            if (paths[i].IndexOf(fileName) > -1) {
+                UserPermaPref user = new UserPermaPref();
+                UserPermaPrefImport.ImportUserPermaPrefFromPathIn(in paths[i],
+                    ref user, out bool wasConvertedWithoutError);
+                SaveUserInCacheRegister(user);
+                return;
+            }
+        }
+    }
+
 
     [ContextMenu("Import")]
     public void ImportAll()
@@ -23,12 +50,14 @@ public class LoadAndSavePermaPrefRegisterMono : MonoBehaviour
         for (int i = 0; i < paths.Length; i++)
         {
             UserPermaPref user = new UserPermaPref();
-            UserPermaPrefImport.ImportUserPermaPrefFromPath(in paths[i],
-                in user, out bool wasConvertedWithoutError);
+            UserPermaPrefImport.ImportUserPermaPrefFromPathIn(in paths[i],
+                ref user, out bool wasConvertedWithoutError);
             SaveUserInCacheRegister(user);
         }
     }
 
+   
+  
     [ContextMenu("Export")]
     public void ExportCollectedData()
     {

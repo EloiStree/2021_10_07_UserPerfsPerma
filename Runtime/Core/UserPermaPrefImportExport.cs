@@ -15,15 +15,16 @@ public class UserPermaPrefImportExport
     public static string m_defaultReplaceAlphaNum = "_";
     public static uint m_defaultMaxFileSize = 200;
 
-    public static void SaveAsFile(in IMetaAbsolutePathDirectoryGet directoryPath,in UserPermaPref user)
+    public static void SaveAsFile(in IMetaAbsolutePathDirectoryGet directoryPath, in UserPermaPref user)
     {
         string newDirePath = directoryPath.GetPath();
         E_StringByte64Utility.GetText64FromText(in user.m_userInfo.m_userStringId, out string b64ID);
 
-        if (!Directory.Exists(newDirePath)) {
+        if (!Directory.Exists(newDirePath))
+        {
             Directory.CreateDirectory(newDirePath);
         }
-        string filePath= newDirePath + "/" + b64ID + FileExtensionName;
+        string filePath = newDirePath + "/" + b64ID + FileExtensionName;
         ConvertToExportableText(in user, out string text);
         File.WriteAllText(filePath, text);
     }
@@ -52,10 +53,10 @@ public class UserPermaPrefImportExport
             metaInfo.AppendLine("//Base64: https://www.base64decode.org/");
         }
 
-        textInFile = string.Join("\n\n", metaInfo.ToString(), userInfo,  textPrimitive, textDynamique);
+        textInFile = string.Join("\n\n", metaInfo.ToString(), userInfo, textPrimitive, textDynamique);
     }
 
-    
+
 
     private static void GetSaveProposition(in UserContext userInfo, out string userInfoAsText)
     {
@@ -276,5 +277,11 @@ public class UserPermaPrefImportExport
     }
 
 
+    public static void GetFileNameFromUserId(in string stringId, out string b64FileWithExtension)
+    {
+
+        E_StringByte64Utility.GetText64FromText(in stringId, out string baseId64);
+        b64FileWithExtension = baseId64 + FileExtensionName;
+    }
 
 }

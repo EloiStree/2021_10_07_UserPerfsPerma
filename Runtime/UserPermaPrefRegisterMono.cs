@@ -124,7 +124,7 @@ public abstract class AbstractUserPermaPrefRegister
 
 public class DefaultUserPermaPrefRegister : AbstractUserPermaPrefRegister
 {
-    public Dictionary<string, UserPermaPref> m_registeredUser = new Dictionary<string, UserPermaPref>();
+    public  Dictionary<string, UserPermaPref> m_registeredUser = new Dictionary<string, UserPermaPref>();
     public override void Flush()
     {
         m_registeredUser.Clear();
@@ -155,6 +155,11 @@ public class DefaultUserPermaPrefRegister : AbstractUserPermaPrefRegister
 
     public override bool IsUserExist(in string stringId)
     {
+        if (stringId == null)
+            return false;
+        if (stringId.Length == 0)
+            return false;
+
         return m_registeredUser.ContainsKey(stringId.Trim());
     }
 

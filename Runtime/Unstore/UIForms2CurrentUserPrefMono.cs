@@ -1,18 +1,19 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class UI_FormToPlayerPrefsStorageMono : MonoBehaviour
+public class UIForms2CurrentUserPrefMono : MonoBehaviour
 {
     public UserPermaPrefMono m_currentUser;
-    public UserPermaPrefRegisterMono m_register;
-    public LoadAndSavePermaPrefRegisterMono m_allUsersStorage;
-
     public InputField m_userIdInputField;
     public InputFieldToUnthrusted[] m_inputfields;
     public ToogleToUnthrusted[] m_toggles;
 
+    public bool m_addCurrentDateWhenSaved=true;
+    public string m_dateLabel = "Last Date";
+    public string m_dateFormat = "yyyy MM dd hh:mm";
     [System.Serializable]
     public class InputFieldToUnthrusted
     {
@@ -27,13 +28,11 @@ public class UI_FormToPlayerPrefsStorageMono : MonoBehaviour
     }
 
     [ContextMenu("Import and Save")]
-    public void SaveUserInCurrentAndStorage()
+    public void OverrideWithFormInfo()
     {
         string userId = m_userIdInputField.text;
-        UserPermaPref user;
-        m_register.GetRegisterRef().SearchFor(in userId, out bool found, out user);
-        if (!found)
-            user = new UserPermaPref(m_userIdInputField.text);
+        UserPermaPref user = m_currentUser.User;
+        user.SetUserId(m_userIdInputField.text);
 
         for (int i = 0; i < m_inputfields.Length; i++)
         {
@@ -51,7 +50,8 @@ public class UI_FormToPlayerPrefsStorageMono : MonoBehaviour
                     , m_toggles[i].m_toggle.isOn);
             }
         }
-        m_allUsersStorage.SaveUserInCacheAndDirectory(user);
+        if (m_addCurrentDateWhenSaved)
+            user.SetUnthrustedText(in m_dateLabel, DateTime.Now.ToString(m_dateFormat));
         m_currentUser.Override(user);
     }
 }

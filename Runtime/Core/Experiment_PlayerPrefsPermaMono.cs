@@ -52,7 +52,7 @@ public class Experiment_PlayerPrefsPermaMono : MonoBehaviour
         UserPermaPrefImportExport.ConvertToExportableText(in user, out string exportText);
         m_textExported = exportText;
         user = new UserPermaPref("you");
-        UserPermaPrefImport.ImportUserPermaPrefFromText(in exportText, out bool converted, in user);
+        UserPermaPrefImport.ImportUserPermaPrefFromText(in exportText, out bool converted, ref user);
         user.m_dynamiqueStorage.AddIfNotContaining(new KP_EventTerminalContextText());
         //user.m_dynamiqueStorage.AddIfNotContaining(new KeyPropertiesVector3Stringable());
         foreach (var item in user.m_dynamiqueStorage.m_dynamiqueStorage)
@@ -65,18 +65,18 @@ public class Experiment_PlayerPrefsPermaMono : MonoBehaviour
     }
 
     [TextArea(0, 10)]
-    public string m_textExported;
+    public string m_textExported="";
 
-    public List<string> m_keyExport;
-    public List<string> m_valueExport;
-    public List<string> m_keyImport;
-    public List<string> m_valueImport;
+    public List<string> m_keyExport=new List<string>();
+    public List<string> m_valueExport = new List<string>();
+    public List<string> m_keyImport = new List<string>();
+    public List<string> m_valueImport = new List<string>();
 }
 
 [System.Serializable]
 public class UserContext {
-    public string m_userAlias;
-    public string m_userStringId;
+    public string m_userAlias="";
+    public string m_userStringId="";
 }
 
 [System.Serializable]
@@ -579,6 +579,18 @@ public class KeyProperties<T> : IKeyProperitiesAsGenericContainer<T>, IKeyProper
         }
         throw new Exception("Value not found, please check that it exists. Or catch the exception");
     }
+    public T GetValue(in string key)
+    {
+
+        for (int i = m_properties.Count - 1; i >= 0; i--)
+        {
+            if (IsEquals(in key, in m_properties[i].m_key))
+            {
+                return m_properties[i].m_value;
+            }
+        }
+        throw new Exception("Value not found, please check that it exists. Or catch the exception");
+    }
     public void GetValue(in string key, out bool found, out T value, T defaultValue)
     {
 
@@ -594,8 +606,22 @@ public class KeyProperties<T> : IKeyProperitiesAsGenericContainer<T>, IKeyProper
         value = defaultValue;
         found = false;
     }
+    public T  GetValue(in string key, T defaultValue)
+    {
 
-    
+        for (int i = m_properties.Count - 1; i >= 0; i--)
+        {
+            if (IsEquals(in key, in m_properties[i].m_key))
+            {
+                return m_properties[i].m_value;
+                
+            }
+        }
+        return defaultValue;
+    }
+
+
+
     public void GetValue(in string key, out bool found, out string value)
     {
         for (int i = 0; i < m_properties.Count; i++)

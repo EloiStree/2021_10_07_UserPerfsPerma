@@ -9,14 +9,19 @@ public class UserPermaPrefImport
 {
     public enum ReadingCollection { Primitive, Dynamique }
 
-
     public static void ImportUserPermaPrefFromPath(in string path,
-        in UserPermaPref userWithContext, out bool converted ) {
+     out UserPermaPref userWithContext, out bool converted)
+    {
+        userWithContext = new UserPermaPref();
+        ImportUserPermaPrefFromPathIn(in path, ref userWithContext, out converted);
+    }
+        public static void ImportUserPermaPrefFromPathIn(in string path,
+        ref UserPermaPref userWithContext, out bool converted ) {
 
         if (File.Exists(path))
         {
             string fileText = File.ReadAllText(path);
-            ImportUserPermaPrefFromText(in fileText,out converted, in userWithContext);
+            ImportUserPermaPrefFromText(in fileText,out converted, ref userWithContext);
          
             return;
         }
@@ -26,7 +31,7 @@ public class UserPermaPrefImport
 
 
     public static void ImportUserPermaPrefFromText(in string text, out bool convertedUser,
-        in UserPermaPref playerWithContext)
+        ref UserPermaPref playerWithContext)
     {
        
         convertedUser = false;

@@ -8,41 +8,40 @@ using UnityEngine;
 public class ExportUserPermaRegisterAsCSV : MonoBehaviour
 {
     public UserPermaPrefRegisterMono m_register;
-
-    public string m_csvNameWithExtension = "default.csv";
-    public string m_csvAllNameWithExtension = "defaultall.csv";
     public string[] m_columnNameWanted=new string[] { "mail", "firstname", "lastname","bestscore"  };
     [TextArea(0,10)]
     public string m_csvDebug;
     [TextArea(0, 10)]
     public string m_csvDebugAll;
+    public Eloi.PrimitiveUnityEvent_String m_fullCsvGenerated;
+    public Eloi.PrimitiveUnityEvent_String m_wantedColumnCsvGenerated;
 
-    public void GetProposeCSVName(out string csvName)
-    {
-        csvName = m_csvNameWithExtension;
-    }
-    public void GetProposeCSVNameAll(out string csvName)
-    {
-        csvName = m_csvAllNameWithExtension;
-    }
-
+   
     [ContextMenu("Generate csv ")]
     public void ExportCSVWithParamsColumns()
     {
+        
         UserPermaPrefExportToCSV.ExportCSVAsFullData(in m_register, out m_csvDebug, m_columnNameWanted);
+        m_wantedColumnCsvGenerated.Invoke(m_csvDebug);
+
     }
     public void ExportCSVWithParamsColumns(out string csv)
     {
         UserPermaPrefExportToCSV.ExportCSVAsFullData(in m_register, out csv, m_columnNameWanted);
+        m_wantedColumnCsvGenerated.Invoke(csv);
+        m_csvDebug = csv;
     }
     [ContextMenu("Generate csv with all")]
     public void ExportCSVWithAllDataInIt()
     {
         UserPermaPrefExportToCSV.ExportCSVWithAllDataInIt(in m_register, out m_csvDebugAll);
+        m_fullCsvGenerated.Invoke(m_csvDebugAll);
     }
     public void ExportCSVWithAllDataInIt(out string csv)
     {
         UserPermaPrefExportToCSV.ExportCSVWithAllDataInIt(in m_register, out csv);
+        m_fullCsvGenerated.Invoke(csv);
+        m_csvDebugAll = csv;
     }
 
 

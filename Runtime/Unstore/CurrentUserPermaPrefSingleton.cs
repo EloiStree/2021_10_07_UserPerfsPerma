@@ -13,10 +13,15 @@ public class CurrentUserPermaPrefSingleton : MonoBehaviour
         } }
     public static void GetUserReference(out UserPermaPrefMono userInfo)
     {
-        userInfo = m_instance.m_whereToStoreInfo;
+        if (m_instance == null)
+            userInfo = null;
+        else
+           userInfo = m_instance.m_whereToStoreInfo;
     }
     public static UserPermaPrefMono GetUserReference()
     {
+        if (m_instance == null)
+            return null;
         return m_instance.m_whereToStoreInfo;
     }
     private static CurrentUserPermaPrefSingleton m_instance;

@@ -27,6 +27,24 @@ public class UIForms2CurrentUserPrefMono : MonoBehaviour
         public Toggle m_toggle;
     }
 
+    public void FlushToZeroData() {
+
+        for (int i = 0; i < m_inputfields.Length; i++)
+        {
+            if (m_inputfields[i].m_inputField != null)
+            {
+                m_inputfields[i].m_inputField.text = "";
+            }
+        }
+        for (int i = 0; i < m_toggles.Length; i++)
+        {
+            if (m_toggles[i].m_toggle != null)
+            {
+               // m_toggles[i].m_toggle.on = false;
+            }
+        }
+    }
+
     [ContextMenu("Import and Save")]
     public void OverrideWithFormInfo()
     {

@@ -8,6 +8,9 @@ public class UserPermaPrefMono : MonoBehaviour
 {
     [SerializeField] UserPermaPref m_userInfo;
 
+    public void ResetNewUser() {
+        User = new UserPermaPref();
+    }
     public UserPermaPref GetPlayerReference() {
 
         return m_userInfo;
@@ -17,6 +20,10 @@ public class UserPermaPrefMono : MonoBehaviour
     {
         get { return m_userInfo; }
         set { m_userInfo = value; }
+    }
+    public UserPermaPref GetUserInfo() 
+    {
+        return m_userInfo; 
     }
 
     public void Override(UserPermaPref user)

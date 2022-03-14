@@ -57,7 +57,12 @@ public class UserPermaPrefExportToCSV{
         registerMono.AppendKeysAsDistinctIn(ref columnDico);
         UserPermaPrefExportToCSV.ExportCSVAsFullData(in registerMono, out csv, columnDico.Keys.ToArray());
     }
-
+    public static void ExportCSVWithAllDataInIt(in AbstractUserPermaPrefRegister register, out string csv)
+    {
+        Dictionary<string, string> columnDico = new Dictionary<string, string>();
+        register.AppendKeysAsDistinctIn(ref columnDico);
+        UserPermaPrefExportToCSV.ExportCSVAsFullData(in register, out csv, columnDico.Keys.ToArray());
+    }
 
 
     public static void ExportCSVAsFullData(in UserPermaPrefRegisterMono registerMono, out string csv, params string [] columnNameRequested)

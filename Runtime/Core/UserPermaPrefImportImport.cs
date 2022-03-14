@@ -9,6 +9,32 @@ public class UserPermaPrefImport
 {
     public enum ReadingCollection { Primitive, Dynamique }
 
+
+    public static void ImportUsersPermaFromPathToRegister(in Eloi.IMetaAbsolutePathDirectoryGet directory,
+        ref AbstractUserPermaPrefRegister register) {
+        string dirPath = directory.GetPath();
+        if (!Directory.Exists(dirPath))
+            return;
+        string[] filePaths = Directory.GetFiles(dirPath, "*" + UserPermaPrefImportExport.FileExtensionName, SearchOption.AllDirectories);
+
+        for (int i = 0; i < filePaths.Length; i++)
+        {
+            UserPermaPref user;
+            UserPermaPrefImport.ImportUserPermaPrefFromPath(in filePaths[i], out user, out bool converted);
+            if (converted)
+            {
+                user.GetUserId(out string id);
+                if (Eloi.E_StringUtility.IsFilled(id)) {
+                    register.OverrideOrAdd(in user);
+                }
+            }
+        }
+
+    }
+
+
+
+
     public static void ImportUserPermaPrefFromPath(in string path,
      out UserPermaPref userWithContext, out bool converted)
     {

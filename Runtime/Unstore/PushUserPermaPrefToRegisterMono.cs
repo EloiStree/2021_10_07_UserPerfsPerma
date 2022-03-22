@@ -7,6 +7,7 @@ public class PushUserPermaPrefToRegisterMono : MonoBehaviour
     public UserPermaPrefMono m_userInScene;
     public UserPermaPrefRegisterMono m_register;
 
+    [ContextMenu("override and push to register")]
     public void OverridePushUserToRegister()
     {
         m_userInScene.User.GetUserId(out string id);
